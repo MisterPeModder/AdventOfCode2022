@@ -26,6 +26,8 @@ suspend fun main() {
     val vertx = Vertx.vertx()
     val client = WebClient.create(vertx)
 
+    Configuration.load().save()
+
     val result = awaitResult<HttpResponse<Buffer>> { result ->
         client.getAbs("http://example.com").timeout(1000).send(result)
     }
