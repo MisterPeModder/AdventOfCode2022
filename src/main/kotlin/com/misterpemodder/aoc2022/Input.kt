@@ -17,6 +17,8 @@
 package com.misterpemodder.aoc2022
 
 import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -35,28 +37,36 @@ import kotlin.io.path.outputStream
  * Fetch the input of a specific AOC day and year.
  * Tries to read a cache located in .aoc/YEAR/DAY.txt before attempting to download via HTTP.
  */
-suspend fun fetchInput(httpClient: HttpClient, year: Int, day: Int): ByteReadChannel {
-    val cacheDirectory = Configuration.DIRECTORY.resolve(year.toString())
+internal suspend fun fetchInput(config: Configuration): ByteReadChannel {
+    val cacheDirectory = Configuration.DIRECTORY.resolve(config.year.toString())
 
-    if (!cacheDirectory.exists())
-        cacheDirectory.createDirectories()
-    val cachePath = cacheDirectory.resolve("day%02d.txt".format(day))
+    if (!cacheDirectory.exists()) cacheDirectory.createDirectories()
+    val cachePath = cacheDirectory.resolve("day%02d.txt".format(config.day))
 
     if (!cachePath.exists()) {
-        val url = "/$year/day/$day/input"
-        val response = httpClient.get(url)
-        if (!response.status.isSuccess())
-            throw RuntimeException("Failed to fetch input from $url: HTTP response ${response.status}")
+        val url = "/${config.year}/day/${config.day}/input"
+        val response = aocHttpClient(config).get(url)
+        if (!response.status.isSuccess()) throw RuntimeException("Failed to fetch input from $url: HTTP response ${response.status}")
 
         cachePath.outputStream(
-            StandardOpenOption.WRITE,
-            StandardOpenOption.CREATE
+            StandardOpenOption.WRITE, StandardOpenOption.CREATE
         ).use {
             response.bodyAsChannel().toInputStream().copyTo(it)
         }
     }
 
     return cachePath.inputStream(StandardOpenOption.READ).buffered().toByteReadChannel()
+}
+
+private fun aocHttpClient(config: Configuration): HttpClient {
+    val token = config.token ?: throw IllegalStateException("Missing API token")
+
+    return HttpClient(CIO) {
+        defaultRequest {
+            url("https://adventofcode.com")
+            cookie("session", token)
+        }
+    }
 }
 
 fun ByteReadChannel.utf8Lines(): Flow<String> = flow {
@@ -71,9 +81,7 @@ fun ByteReadChannel.utf8Lines(): Flow<String> = flow {
 suspend fun ByteReadChannel.readAllUTF8(): String {
     val buffer = StringBuilder()
 
-    while (readUTF8LineTo(buffer, Int.MAX_VALUE))
-        buffer.append('\n')
-    if (buffer.isNotEmpty())
-        buffer.deleteCharAt(buffer.length - 1)
+    while (readUTF8LineTo(buffer, Int.MAX_VALUE)) buffer.append('\n')
+    if (buffer.isNotEmpty()) buffer.deleteCharAt(buffer.length - 1)
     return buffer.toString()
 }

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -52,5 +53,12 @@ tasks.withType<KotlinCompile> {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("com.misterpemodder.aoc2022.MainKt")
+}
+
+tasks.withType<Jar> {
+    archivesName.set("aoc2022")
+    manifest {
+        attributes["Main-Class"] = "com.misterpemodder.aoc2022.MainKt"
+    }
 }

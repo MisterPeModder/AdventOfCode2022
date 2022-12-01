@@ -16,23 +16,60 @@
 
 package com.misterpemodder.aoc2022
 
-import io.ktor.client.*
-import io.ktor.client.engine.cio.*
-import io.ktor.client.plugins.*
-import io.ktor.client.request.*
+import kotlin.system.exitProcess
 
-suspend fun main() {
-    val config = Configuration.load()
-    val token = config.token ?: throw IllegalStateException("Missing API token")
+suspend fun main(args: Array<String>) {
+    val config = parseArguments(Configuration.load(), args)
 
+    println(args.joinToString())
     config.save()
 
-    val httpClient = HttpClient(CIO) {
-        defaultRequest {
-            url("https://adventofcode.com")
-            cookie("session", token)
+    fetchInput(config).utf8Lines().collect(::println)
+}
+
+private fun parseArguments(baseConfig: Configuration, args: Array<String>): Configuration {
+    var token = baseConfig.token
+    var year = baseConfig.year
+    var day = baseConfig.day
+
+    val iterator = args.iterator()
+
+    while (iterator.hasNext()) {
+        when (val arg = iterator.next().trim()) {
+            "-h", "--help" -> showHelp()
+            "-y", "--year" -> year = iterator.nextValue(arg, String::toInt)
+            "-d", "--day" -> day = iterator.nextValue(arg, String::toInt)
+            "-t", "--token" -> token = iterator.nextValue(arg) { this }
+
+            else -> throw RuntimeException("Unknown argument: $arg")
         }
     }
-
-    fetchInput(httpClient, 2022, 1).utf8Lines().collect(::println)
+    return Configuration(token = token, year = year, day = day)
 }
+
+private fun <T> Iterator<String>.nextValue(name: String, parser: String.() -> T): T {
+    try {
+        return next().trim().let(parser)
+    } catch (ignored: RuntimeException) {
+        throw RuntimeException("Missing or invalid value to argument $name")
+    }
+}
+
+private fun showHelp(): Nothing {
+    println(
+        """
+        Usage: aoc2022 [-h] [--year YEAR] [--day DAY] [--token TOKEN]
+        
+        Advent of Code runner
+        Configuration and cache files are located in the .aoc directory at the current working directory.
+        
+        Options:
+          -h, --help  show this help message and exit
+          -y, --year  the aoc year
+          -d, --day   the challenge day number, ranging from 1 to 25 (inclusive)
+          -t, --token a request token for downloading challenge input over HTTP
+    """.trimIndent()
+    )
+    exitProcess(0)
+}
+
