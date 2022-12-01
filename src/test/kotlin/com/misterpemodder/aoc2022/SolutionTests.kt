@@ -14,34 +14,42 @@
  * limitations under the License.
  */
 
-package com.misterpemodder.aoc2022.solutions
+package com.misterpemodder.aoc2022
 
-import com.misterpemodder.aoc2022.Solution
-import com.misterpemodder.aoc2022.readAllUTF8
 import io.ktor.utils.io.*
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
-internal object Day00 : Solution<Day00.Data> {
+internal object SolutionTests {
+    @Test
+    fun day00() {
+        runBlocking {
+            val raw = ByteReadChannel("Sample data".toByteArray())
+            val data = timed { Day00.setup(raw) }
+
+            assertNotNull(data.result)
+
+            val result1 = timed { Day00.part1(data.result) }
+            assertEquals(11, result1.result)
+
+            val result2 = timed { Day00.part2(data.result) }
+            assertEquals(44, result2.result)
+        }
+    }
+}
+
+private object Day00 : Solution<Day00.Data> {
+    override val year = 0
+    override val day = 0
+
     @JvmRecord
     data class Data(val raw: String)
 
-    override val name: String
-        get() = "Sample AOC solution"
-
-    override suspend fun setup(input: ByteReadChannel): Data =
-        Data(input.readAllUTF8())
+    override suspend fun setup(input: ByteReadChannel): Data = Data(input.readAllUTF8())
 
     override fun part1(data: Data): Long = data.raw.length.toLong()
 
     override fun part2(data: Data): Long = data.raw.length.toLong() * 4
-
-    @Test
-    fun day00Test() {
-        val data = runBlocking { setup(ByteReadChannel("Sample data".toByteArray())) }
-        assertEquals(11, part1(data))
-        assertEquals(44, part2(data))
-    }
 }
-

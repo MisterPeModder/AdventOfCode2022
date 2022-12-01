@@ -21,10 +21,8 @@ import kotlin.system.exitProcess
 suspend fun main(args: Array<String>) {
     val config = parseArguments(Configuration.load(), args)
 
-    println(args.joinToString())
     config.save()
-
-    fetchInput(config).utf8Lines().collect(::println)
+    runSolution(config, fetchInput(config))
 }
 
 private fun parseArguments(baseConfig: Configuration, args: Array<String>): Configuration {
