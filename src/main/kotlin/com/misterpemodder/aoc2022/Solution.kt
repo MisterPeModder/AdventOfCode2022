@@ -16,13 +16,13 @@
 
 package com.misterpemodder.aoc2022
 
-import kotlinx.coroutines.flow.Flow
+import io.ktor.utils.io.*
 
-interface Solution<Data> {
+internal interface Solution<Data> {
     val name: String
         get() = this::class.java.simpleName.lowercase()
 
-    suspend fun setup(input: Flow<Char>): Data
+    suspend fun setup(input: ByteReadChannel): Data
 
     fun part1(data: Data): Long
 

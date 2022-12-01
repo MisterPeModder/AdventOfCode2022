@@ -17,9 +17,8 @@
 package com.misterpemodder.aoc2022.solutions
 
 import com.misterpemodder.aoc2022.Solution
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.fold
+import com.misterpemodder.aoc2022.readAllUTF8
+import io.ktor.utils.io.*
 import kotlinx.coroutines.runBlocking
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -31,8 +30,8 @@ internal object Day00 : Solution<Day00.Data> {
     override val name: String
         get() = "Sample AOC solution"
 
-    override suspend fun setup(input: Flow<Char>): Data =
-        Data(input.fold(StringBuilder(), StringBuilder::append).toString())
+    override suspend fun setup(input: ByteReadChannel): Data =
+        Data(input.readAllUTF8())
 
     override fun part1(data: Data): Long = data.raw.length.toLong()
 
@@ -40,7 +39,7 @@ internal object Day00 : Solution<Day00.Data> {
 
     @Test
     fun day00Test() {
-        val data = runBlocking { setup("Sample data".asSequence().asFlow()) }
+        val data = runBlocking { setup(ByteReadChannel("Sample data".toByteArray())) }
         assertEquals(11, part1(data))
         assertEquals(44, part2(data))
     }

@@ -23,7 +23,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.StandardOpenOption
@@ -40,7 +39,7 @@ internal data class Configuration(
     companion object {
         val DEFAULT = Configuration(token = null, year = 2022, day = 1)
 
-        private val DIRECTORY: Path = Path(".aoc")
+        val DIRECTORY: Path = Path(".aoc")
         val CONFIG_PATH: Path = DIRECTORY.resolve("config.json")
 
         /**
@@ -81,13 +80,11 @@ internal data class Configuration(
      */
     fun save(path: Path = CONFIG_PATH) {
         makeDirectory()
-        BufferedOutputStream(
-            path.outputStream(
-                StandardOpenOption.WRITE,
-                StandardOpenOption.TRUNCATE_EXISTING,
-                StandardOpenOption.CREATE
-            )
-        ).use {
+        path.outputStream(
+            StandardOpenOption.WRITE,
+            StandardOpenOption.TRUNCATE_EXISTING,
+            StandardOpenOption.CREATE
+        ).buffered().use {
             Json.encodeToStream(this, it)
         }
     }

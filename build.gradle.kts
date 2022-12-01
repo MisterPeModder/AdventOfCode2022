@@ -29,15 +29,16 @@ repositories {
     mavenCentral()
 }
 
+val kotlinxCoroutinesVersion: String by project
+val kotlinxSerializationVersion: String by project
+val ktorVersion: String by project
+
 dependencies {
-    val vertxVersion = "4.3.5"
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
-
-    implementation("io.vertx:vertx-web-client:$vertxVersion")
-    implementation("io.vertx:vertx-lang-kotlin-coroutines:$vertxVersion")
-    implementation("io.vertx:vertx-codegen:$vertxVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     testImplementation(kotlin("test"))
 }

@@ -43,3 +43,4 @@ bin/
 
 ### AOC 2022 ###
 .aoc
+.attach_pid*

@@ -16,21 +16,23 @@
 
 package com.misterpemodder.aoc2022
 
-import io.vertx.core.Vertx
-import io.vertx.core.buffer.Buffer
-import io.vertx.ext.web.client.HttpResponse
-import io.vertx.ext.web.client.WebClient
-import io.vertx.kotlin.coroutines.awaitResult
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.*
+import io.ktor.client.request.*
 
 suspend fun main() {
-    val vertx = Vertx.vertx()
-    val client = WebClient.create(vertx)
+    val config = Configuration.load()
+    val token = config.token ?: throw IllegalStateException("Missing API token")
 
-    Configuration.load().save()
+    config.save()
 
-    val result = awaitResult<HttpResponse<Buffer>> { result ->
-        client.getAbs("http://example.com").timeout(1000).send(result)
+    val httpClient = HttpClient(CIO) {
+        defaultRequest {
+            url("https://adventofcode.com")
+            cookie("session", token)
+        }
     }
 
-    print(result.bodyAsString())
+    fetchInput(httpClient, 2022, 1).utf8Lines().collect(::println)
 }
