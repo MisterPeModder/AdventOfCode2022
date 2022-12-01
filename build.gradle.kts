@@ -33,6 +33,7 @@ repositories {
 val kotlinxCoroutinesVersion: String by project
 val kotlinxSerializationVersion: String by project
 val ktorVersion: String by project
+val fastUtilVersion: String by project
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
@@ -40,6 +41,8 @@ dependencies {
 
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
+
+    implementation("it.unimi.dsi:fastutil:$fastUtilVersion")
 
     testImplementation(kotlin("test"))
 }
