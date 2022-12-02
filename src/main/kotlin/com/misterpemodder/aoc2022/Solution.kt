@@ -17,6 +17,7 @@
 package com.misterpemodder.aoc2022
 
 import com.misterpemodder.aoc2022.solutions.Day01
+import com.misterpemodder.aoc2022.solutions.Day02
 import io.ktor.utils.io.*
 
 internal interface Solution<Data> {
@@ -30,7 +31,7 @@ internal interface Solution<Data> {
     fun part2(data: Data): Long
 }
 
-private val SOLUTIONS: Map<Pair<Int, Int>, Solution<*>> = listOf(Day01).associateBy {
+private val SOLUTIONS: Map<Pair<Int, Int>, Solution<*>> = listOf(Day01, Day02).associateBy {
     Pair(it.year, it.day)
 }
 
@@ -55,7 +56,10 @@ internal suspend fun <Data> Solution<Data>.run(input: ByteReadChannel) {
 
     val data = timedData.result
     if (data === null) {
-        println("Missing data, cannot execute solution parts")
+        if (timedData.error !== null)
+            println("error while processing data, ${timedData.error}")
+        else
+            println("Missing data, cannot execute solution parts")
         return
     }
 
