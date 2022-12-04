@@ -16,13 +16,21 @@
 
 package com.misterpemodder.aoc2022
 
+import com.misterpemodder.aoc2022.generated.Solutions
 import kotlin.system.exitProcess
 
 suspend fun main(args: Array<String>) {
     val config = parseArguments(Configuration.load(), args)
 
     config.save()
-    runSolution(config, fetchInput(config))
+
+    val solution = Solutions.get(config.year, config.day)
+
+    if (solution === null) {
+        println("No solution found for day ${config.day} of year ${config.year}")
+        return
+    }
+    solution.run(config.year, config.day, fetchInput(config))
 }
 
 private fun parseArguments(baseConfig: Configuration, args: Array<String>): Configuration {

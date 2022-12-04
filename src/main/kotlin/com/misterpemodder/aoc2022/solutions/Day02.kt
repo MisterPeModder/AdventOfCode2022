@@ -16,14 +16,13 @@
 
 package com.misterpemodder.aoc2022.solutions
 
+import com.misterpemodder.aoc2022.RegisterSolution
 import com.misterpemodder.aoc2022.Solution
 import com.misterpemodder.aoc2022.utf8Lines
 import io.ktor.utils.io.*
 
+@RegisterSolution(year = 2022, day = 2)
 internal object Day02 : Solution<StrategyGuide> {
-    override val year = 2022
-    override val day = 2
-
     override suspend fun setup(input: ByteReadChannel): StrategyGuide {
         // initialize strengths and weaknesses of each shape
         // we cannot put this inside the 'Shape' class because it would reference itself.

@@ -18,9 +18,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.21"
-    kotlin("plugin.serialization") version "1.7.21"
+    kotlin("jvm")
+    kotlin("plugin.serialization")
+    id("com.google.devtools.ksp")
     application
+}
+
+buildscript {
+    dependencies {
+        classpath(kotlin("gradle-plugin", version = "1.7.21"))
+    }
 }
 
 group = "com.misterpemodder"
@@ -30,12 +37,15 @@ repositories {
     mavenCentral()
 }
 
+val kotlinVersion: String by project
 val kotlinxCoroutinesVersion: String by project
 val kotlinxSerializationVersion: String by project
 val ktorVersion: String by project
 val fastUtilVersion: String by project
 
 dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$kotlinxSerializationVersion")
 
@@ -45,6 +55,9 @@ dependencies {
     implementation("it.unimi.dsi:fastutil:$fastUtilVersion")
 
     testImplementation(kotlin("test"))
+
+    implementation(project(":processor"))
+    ksp(project(":processor"))
 }
 
 tasks.test {
@@ -63,5 +76,14 @@ tasks.withType<Jar> {
     archivesName.set("aoc2022")
     manifest {
         attributes["Main-Class"] = "com.misterpemodder.aoc2022.MainKt"
+    }
+}
+
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+    sourceSets.test {
+        kotlin.srcDir("build/generated/ksp/test/kotlin")
     }
 }

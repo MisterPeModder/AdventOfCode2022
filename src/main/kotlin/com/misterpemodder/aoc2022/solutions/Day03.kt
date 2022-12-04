@@ -16,16 +16,15 @@
 
 package com.misterpemodder.aoc2022.solutions
 
+import com.misterpemodder.aoc2022.RegisterSolution
 import com.misterpemodder.aoc2022.Solution
 import com.misterpemodder.aoc2022.utf8Lines
 import io.ktor.utils.io.*
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 
+@RegisterSolution(year = 2022, day = 3)
 internal object Day03 : Solution<List<ByteArray>> {
-    override val year = 2022
-    override val day = 3
-
     override suspend fun setup(input: ByteReadChannel) = input.utf8Lines().map { line ->
         val items = ByteArray(line.length)
         for ((i, c) in line.toCharArray().withIndex()) {

@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    val kotlinVersion: String by settings
-    val kspVersion: String by settings
-
-    plugins {
-        id("com.google.devtools.ksp") version kspVersion
-        kotlin("jvm") version kotlinVersion
-        kotlin("plugin.serialization") version kotlinVersion
-    }
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-    }
+plugins {
+    kotlin("jvm")
 }
 
-rootProject.name = "Advent of Code 2022"
+repositories {
+    mavenCentral()
+}
 
-include(":processor")
+val kspVersion: String by project
+
+dependencies {
+    implementation("com.google.devtools.ksp:symbol-processing-api:$kspVersion")
+}

@@ -14,21 +14,8 @@
  * limitations under the License.
  */
 
-pluginManagement {
-    val kotlinVersion: String by settings
-    val kspVersion: String by settings
+package com.misterpemodder.aoc2022
 
-    plugins {
-        id("com.google.devtools.ksp") version kspVersion
-        kotlin("jvm") version kotlinVersion
-        kotlin("plugin.serialization") version kotlinVersion
-    }
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-    }
-}
-
-rootProject.name = "Advent of Code 2022"
-
-include(":processor")
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+annotation class RegisterSolution(val year: Int, val day: Int)

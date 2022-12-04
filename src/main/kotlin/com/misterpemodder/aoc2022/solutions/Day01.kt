@@ -18,16 +18,15 @@ package com.misterpemodder.aoc2022.solutions
 
 import com.misterpemodder.aoc2022.Solution
 import com.misterpemodder.aoc2022.utf8Lines
+import com.misterpemodder.aoc2022.RegisterSolution
 import io.ktor.utils.io.*
 import it.unimi.dsi.fastutil.longs.LongArrayList
 import it.unimi.dsi.fastutil.longs.LongComparators
 import it.unimi.dsi.fastutil.longs.LongList
 import kotlinx.coroutines.flow.fold
 
+@RegisterSolution(year = 2022, day = 1)
 internal object Day01 : Solution<LongList> {
-    override val year = 2022
-    override val day = 1
-
     override suspend fun setup(input: ByteReadChannel): LongList {
         var elfCalories = 0L
         val allCalories = input.utf8Lines().fold(LongArrayList()) { caloriesGroups, line ->

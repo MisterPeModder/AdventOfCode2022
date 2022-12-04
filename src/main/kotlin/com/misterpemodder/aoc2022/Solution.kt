@@ -16,15 +16,12 @@
 
 package com.misterpemodder.aoc2022
 
-import com.misterpemodder.aoc2022.solutions.Day01
-import com.misterpemodder.aoc2022.solutions.Day02
-import com.misterpemodder.aoc2022.solutions.Day03
+import com.misterpemodder.aoc2022.generated.Solutions
 import io.ktor.utils.io.*
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 
 internal interface Solution<Data> {
-    val year: Int
-    val day: Int
-
     suspend fun setup(input: ByteReadChannel): Data
 
     fun part1(data: Data): Long
@@ -32,24 +29,24 @@ internal interface Solution<Data> {
     fun part2(data: Data): Long
 }
 
-private val SOLUTIONS: Map<Pair<Int, Int>, Solution<*>> = listOf(Day01, Day02, Day03).associateBy {
-    Pair(it.year, it.day)
-}
+/**
+ * Get the instance of [Solution] corresponding  to the given year and day.
+ */
+internal fun Solutions.get(year: Int, day: Int): Solution<*>? {
+    val name = getName(year, day) ?: return null
 
-internal suspend fun runSolution(config: Configuration, input: ByteReadChannel) {
-    val solution = SOLUTIONS[Pair(config.year, config.day)]
+    @Suppress("UNCHECKED_CAST")
+    val clazz: KClass<Solution<*>> = Class.forName(name).kotlin as KClass<Solution<*>>
 
-    if (solution === null) {
-        println("No solution found for day ${config.day} of year ${config.year}")
-        return
-    }
-    solution.run(input)
+    if (clazz.objectInstance !== null)
+        return clazz.objectInstance
+    return clazz.createInstance()
 }
 
 /**
  * Executes this solution, printing the results to stdout.
  */
-internal suspend fun <Data> Solution<Data>.run(input: ByteReadChannel) {
+internal suspend fun <Data> Solution<Data>.run(year: Int, day: Int, input: ByteReadChannel) {
     println("Solving day $day of year $year...")
 
     val timedData = timed { setup(input) }
