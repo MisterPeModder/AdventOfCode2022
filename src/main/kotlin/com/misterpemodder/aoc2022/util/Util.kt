@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.misterpemodder.aoc2022
+package com.misterpemodder.aoc2022.util
 
 /**
  * Converts this boolean to an integer.

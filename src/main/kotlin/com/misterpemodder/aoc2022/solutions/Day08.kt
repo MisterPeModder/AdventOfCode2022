@@ -18,7 +18,7 @@ package com.misterpemodder.aoc2022.solutions
 
 import com.misterpemodder.aoc2022.RegisterSolution
 import com.misterpemodder.aoc2022.Solution
-import com.misterpemodder.aoc2022.toInt
+import com.misterpemodder.aoc2022.util.toInt
 import com.misterpemodder.aoc2022.utf8Lines
 import io.ktor.utils.io.*
 import it.unimi.dsi.fastutil.bytes.ByteArrayList
