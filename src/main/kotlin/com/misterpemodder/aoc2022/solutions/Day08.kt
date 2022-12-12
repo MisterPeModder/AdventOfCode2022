@@ -20,6 +20,7 @@ import com.misterpemodder.aoc2022.RegisterSolution
 import com.misterpemodder.aoc2022.Solution
 import com.misterpemodder.aoc2022.util.toInt
 import com.misterpemodder.aoc2022.utf8Lines
+import com.misterpemodder.aoc2022.util.Side
 import io.ktor.utils.io.*
 import it.unimi.dsi.fastutil.bytes.ByteArrayList
 
@@ -115,12 +116,4 @@ internal data class TreeGrid(val data: ByteArray, val width: Int, val height: In
         } while (isInBounds(currX + xOffset, currY + yOffset) && get(currX, currY) < treeHeight)
         return count
     }
-}
-
-/**
- * @param xOffset Moves a given horizontal coordinate closer to this side when offset
- * @param xOffset Moves a given vertical coordinate closer to this side when offset
- */
-internal enum class Side(val xOffset: Int, val yOffset: Int) {
-    TOP(0, -1), BOTTOM(0, 1), LEFT(-1, 0), RIGHT(1, 0)
 }
