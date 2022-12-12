@@ -19,37 +19,41 @@ package com.misterpemodder.aoc2022
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSFile
 import com.google.devtools.ksp.validate
 
-class SolutionProcessor(private val codeGenerator: CodeGenerator) :
-    SymbolProcessor {
-    private var processed: Boolean = false
+class SolutionProcessor(private val codeGenerator: CodeGenerator) : SymbolProcessor {
+    private val solutions: MutableList<Triple<Int, Int, String>> = mutableListOf()
+    private val dependencies: MutableSet<KSFile> = mutableSetOf()
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val symbols =
             resolver.getSymbolsWithAnnotation("com.misterpemodder.aoc2022.RegisterSolution")
-        val solutionClasses = symbols.filterIsInstance<KSClassDeclaration>()
-            .filter(KSClassDeclaration::validate)
-            .toList()
+        val (solutionClasses, nonProcessed) = symbols.filterIsInstance<KSClassDeclaration>()
+            .partition(KSClassDeclaration::validate)
 
+        dependencies += solutionClasses.asSequence().mapNotNull(KSClassDeclaration::containingFile)
+
+        for (solutionClass in solutionClasses) {
+            val (year, day) = getAocYearAndDay(solutionClass)
+            solutions += Triple(year, day, solutionClass.qualifiedName!!.asString())
+        }
+
+        return nonProcessed
+    }
+
+    override fun finish() {
         val packageName = "com.misterpemodder.aoc2022.generated"
         val className = "Solutions"
 
-
-        if (processed)
-            return emptyList()
-        processed = true
-
-        val solutions = solutionClasses.map {
-            val (year, day) = getAocYearAndDay(it)
-            Triple(year, day, it.qualifiedName!!.asString())
-        }.joinToString(separator = "\n        ") { (year, day, name) ->
+        val solutions = solutions.joinToString(separator = "\n        ") { (year, day, name) ->
             "solutions.put(Pair($year, $day), \"$name\")"
         }
 
         codeGenerator.createNewFile(
             Dependencies(
-                aggregating = false
+                aggregating = true,
+                sources = dependencies.toTypedArray()
             ), packageName, className
         ).use { file ->
             file.write(
@@ -58,7 +62,7 @@ package $packageName
         
 object $className {
     private val SOLUTION_NAMES_BY_YEAR_AND_DAY: Map<Pair<Int, Int>, String>;
-                    
+    
     init {
         val solutions = mutableMapOf<Pair<Int, Int>, String>()
                         
@@ -71,8 +75,6 @@ object $className {
 }""".trimIndent().toByteArray()
             )
         }
-
-        return emptyList()
     }
 }
 
