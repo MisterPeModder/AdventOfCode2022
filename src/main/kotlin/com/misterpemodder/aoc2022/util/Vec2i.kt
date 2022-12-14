@@ -42,4 +42,7 @@ data class Vec2i(var x: Int, var y: Int) {
         this.x = source.x
         this.y = source.y
     }
+
+    fun min(other: Vec2i): Vec2i = Vec2i(x.coerceAtMost(other.x), y.coerceAtMost(other.y))
+    fun max(other: Vec2i): Vec2i = Vec2i(x.coerceAtLeast(other.x), y.coerceAtLeast(other.y))
 }
