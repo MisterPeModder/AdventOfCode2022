@@ -48,4 +48,6 @@ internal data class ByteGrid(val data: ByteArray, val width: Int, val height: In
         result = 31 * result + height
         return result
     }
+
+    fun deepCopy(): ByteGrid = ByteGrid(data.copyOf(), width, height)
 }
