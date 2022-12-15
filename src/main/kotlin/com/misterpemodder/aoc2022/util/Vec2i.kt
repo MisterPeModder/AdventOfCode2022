@@ -16,6 +16,7 @@
 
 package com.misterpemodder.aoc2022.util
 
+import kotlin.math.abs
 import kotlin.math.sign
 
 data class Vec2i(var x: Int, var y: Int) {
@@ -45,4 +46,7 @@ data class Vec2i(var x: Int, var y: Int) {
 
     fun min(other: Vec2i): Vec2i = Vec2i(x.coerceAtMost(other.x), y.coerceAtMost(other.y))
     fun max(other: Vec2i): Vec2i = Vec2i(x.coerceAtLeast(other.x), y.coerceAtLeast(other.y))
+
+    fun manhattanDistance(other: Vec2i): Int = manhattanDistance(other.x, other.y)
+    fun manhattanDistance(x: Int, y: Int): Int = abs(this.x - x) + abs(this.y - y)
 }
