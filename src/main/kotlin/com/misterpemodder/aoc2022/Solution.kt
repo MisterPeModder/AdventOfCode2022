@@ -75,7 +75,8 @@ internal suspend fun <Data> Solution<Data>.run(year: Int, day: Int, input: ByteR
 internal suspend fun <T> timed(fn: suspend () -> T): TimedResult<T> {
     val start = System.nanoTime()
     return try {
-        TimedResult(System.nanoTime() - start, result = fn())
+        val result = fn()
+        TimedResult(System.nanoTime() - start, result = result)
     } catch (e: Throwable) {
         when (e) {
             is Exception -> TimedResult(System.nanoTime() - start, error = e)
@@ -93,7 +94,7 @@ internal data class TimedResult<T>(
     val elapsedNanos: Long, val error: Exception? = null, val result: T? = null
 ) {
     val elapsedMillis: Double
-        get() = elapsedNanos.toDouble() / 1000
+        get() = elapsedNanos.toDouble() / 1000_000.0
 
     override fun toString(): String {
         return if (error !== null) {
