@@ -22,11 +22,11 @@ internal data class ByteGrid(val data: ByteArray, val width: Int, val height: In
             ByteGrid(ByteArray(width * height) { 0 }, width, height)
     }
 
-    fun get(pos: Vec2i): Byte = get(pos.x, pos.y)
-    fun get(x: Int, y: Int): Byte = data[y * width + x]
+    operator fun get(pos: Vec2i): Byte = get(pos.x, pos.y)
+    operator fun get(x: Int, y: Int): Byte = data[y * width + x]
 
-    fun set(pos: Vec2i, value: Byte) = set(pos.x, pos.y, value)
-    fun set(x: Int, y: Int, value: Byte) {
+    operator fun set(pos: Vec2i, value: Byte) = set(pos.x, pos.y, value)
+    operator fun set(x: Int, y: Int, value: Byte) {
         data[y * width + x] = value
     }
 
