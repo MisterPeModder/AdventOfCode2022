@@ -42,6 +42,7 @@ val kotlinxCoroutinesVersion: String by project
 val kotlinxSerializationVersion: String by project
 val ktorVersion: String by project
 val fastUtilVersion: String by project
+val multikVersion: String by project
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
@@ -53,6 +54,9 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     implementation("it.unimi.dsi:fastutil:$fastUtilVersion")
+
+    implementation("org.jetbrains.kotlinx:multik-core:$multikVersion")
+    implementation("org.jetbrains.kotlinx:multik-openblas:$multikVersion")
 
     testImplementation(kotlin("test"))
 
